@@ -1,6 +1,5 @@
 const router = require("express").Router();
-const mongoose = require("mongoose");
-const { Exercise, Workout } = require("../models/index");
+const { Workout } = require("../models/index");
 
 router.get('/workouts', async (req, res) => {
   try {
@@ -10,10 +9,8 @@ router.get('/workouts', async (req, res) => {
       },
     ]);
     res.status(200).json(aggDuration);
-    // await Workout.find({}).then((result) => res.status(200).json(result))
   } catch (err) {
     res.status(500).json(err);
-    console.log(err);
   }
 });
 
@@ -31,7 +28,6 @@ router.get('/workouts/range', async (req, res) => {
     res.status(200).json(aggOldDuration);
   } catch (err) {
     res.status(500).json(err);
-    console.log(err);
   }
 });
 
@@ -39,11 +35,9 @@ router.post('/workouts', async (req, res) => {
   try {
     await Workout.create({ day: Date.now(), ...req.body }).then((result) => {
       res.status(201).json(result);
-      console.log(result);
     });
   } catch (err) {
     res.status(500).json(err);
-    console.log(err);
   }
 });
 
@@ -54,12 +48,10 @@ router.put('/workouts/*', async (req, res) => {
       const updatedData = await Workout.findByIdAndUpdate(req.params[0], {
         exercises: newExercises,
       });
-      console.log(updatedData);
       res.status(201).json(updatedData);
     });
   } catch (err) {
     res.status(500).json(err);
-    console.log(err);
   }
 });
 
