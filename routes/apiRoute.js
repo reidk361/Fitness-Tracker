@@ -2,7 +2,7 @@ const router = require("express").Router();
 const mongoose = require("mongoose");
 const { Exercise, Workout } = require("../models/index");
 
-router.get("/workouts", async (req, res) => {
+router.get('/workouts', async (req, res) => {
   try {
     const aggDuration = await Workout.aggregate([
       {
@@ -17,7 +17,7 @@ router.get("/workouts", async (req, res) => {
   }
 });
 
-router.get("/workouts/range", async (req, res) => {
+router.get('/workouts/range', async (req, res) => {
   const currentTime = new Date();
   const currentDay = new Date(currentTime.setDate(currentTime.getDate()));
   const lastWeek = new Date(currentTime.setDate(currentTime.getDate() - 7));
@@ -35,11 +35,27 @@ router.get("/workouts/range", async (req, res) => {
   }
 });
 
-router.post("/workouts", async (req, res) => {
+router.post('/workouts', async (req, res) => {
   try {
     await Workout.create({ day: Date.now(), ...req.body }).then((result) => {
       res.status(201).json(result);
       console.log(result);
+    });
+  } catch (err) {
+    res.status(500).json(err);
+    console.log(err);
+  }
+});
+
+router.put('/workouts/*', async (req, res) => {
+  try {
+    await Workout.findById(req.params[0]).then(async (result) => {
+      const newExercises = result.exercises.concat(req.body);
+      const updatedData = await Workout.findByIdAndUpdate(req.params[0], {
+        exercises: newExercises,
+      });
+      console.log(updatedData);
+      res.status(201).json(updatedData);
     });
   } catch (err) {
     res.status(500).json(err);
